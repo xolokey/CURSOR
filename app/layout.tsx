@@ -1,13 +1,25 @@
-import type { Metadata } from 'next'
-import { GeistSans } from 'geist/font/sans'
-import { GeistMono } from 'geist/font/mono'
-import './globals.css'
+import type React from "react"
+import type { Metadata } from "next"
+import { Inter, JetBrains_Mono } from "next/font/google"
+import "./globals.css"
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.app',
+  title: "Cursor Clone - AI Code Editor",
+  description: "A modern AI-powered code editor inspired by Cursor",
+  generator: "v0.app",
 }
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sans",
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-mono",
+})
 
 export default function RootLayout({
   children,
@@ -15,10 +27,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
-        {children}
-      </body>
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+      <body className="font-sans antialiased">{children}</body>
     </html>
   )
 }
