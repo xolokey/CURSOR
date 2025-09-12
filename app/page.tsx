@@ -22,6 +22,9 @@ import { Switch } from "@/components/ui/switch"
 import { Progress } from "@/components/ui/progress"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { AdvancedEditor } from "@/components/advanced-editor"
+import { GitPanel } from "@/components/git-panel"
+import { FileExplorer as FileExplorerComponent } from "@/components/file-explorer"
 import {
   FileText,
   Folder,
@@ -1654,39 +1657,21 @@ function ProjectManagement({ isOpen, onClose }: { isOpen: boolean; onClose: () =
   )
 }
 
-export default function Home() {
-  const [currentFile, setCurrentFile] = useState<FileItem>({
-    id: "13",
-    name: "app.tsx",
-    type: "file",
-    path: "/src/app.tsx",
-  })
-  const [code, setCode] = useState(`import React from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import Header from './components/Header'
-import Home from './pages/Home'
-import About from './pages/About'
-import Contact from './pages/Contact'
-
-function App() {
-  return (
-    <Router>
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <main className="container mx-auto px-4 py-8">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-          </Routes>
-        </main>
-      </div>
-    </Router>
-  )
+interface FileInfo {
+  name: string;
+  path: string;
+  type: 'file' | 'directory';
+  size: number;
+  modified: Date;
+  created: Date;
+  isHidden: boolean;
+  extension?: string;
+  mimeType?: string;
 }
 
-export default App`)
-
+export default function Home() {
+  const [currentFile, setCurrentFile] = useState<FileInfo | null>(null)
+  const [code, setCode] = useState('')
   const [isTerminalVisible, setIsTerminalVisible] = useState(false)
   const [isProjectManagementOpen, setIsProjectManagementOpen] = useState(false)
   const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false)
@@ -1694,6 +1679,7 @@ export default App`)
   const [notifications, setNotifications] = useState<
     Array<{ id: string; message: string; type: "success" | "error" | "info" }>
   >([])
+  const [activePanel, setActivePanel] = useState<'explorer' | 'git' | 'ai'>('explorer')
 
   const handleKeyboardShortcuts = useCallback(
     (e: KeyboardEvent) => {
@@ -1739,76 +1725,80 @@ export default App`)
     return () => document.removeEventListener("keydown", handleKeyboardShortcuts)
   }, [handleKeyboardShortcuts])
 
-  const handleFileSelect = (file: FileItem) => {
+  const handleFileSelect = async (file: FileInfo) => {
     setCurrentFile(file)
-    // In a real app, you'd load the file content here
-    const sampleCode = {
-      "Button.tsx": `import React from 'react'
-import { cn } from '@/lib/utils'
-
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline'
-  size?: 'sm' | 'md' | 'lg'
-}
-
-export function Button({ 
-  className, 
-  variant = 'primary', 
-  size = 'md', 
-  ...props 
-}: ButtonProps) {
-  return (
-    <button
-      className={cn(
-        'inline-flex items-center justify-center rounded-md font-medium transition-colors',
-        {
-          'bg-primary text-primary-foreground hover:bg-primary/90': variant === 'primary',
-          'bg-secondary text-secondary-foreground hover:bg-secondary/80': variant === 'secondary',
-          'border border-input bg-background hover:bg-accent': variant === 'outline',
-        },
-        {
-          'h-8 px-3 text-sm': size === 'sm',
-          'h-10 px-4': size === 'md',
-          'h-12 px-6 text-lg': size === 'lg',
-        },
-        className
-      )}
-      {...props}
-    />
-  )
-}`,
-      "package.json": `{
-  "name": "cursor-clone",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "next": "^14.0.0",
-    "typescript": "^5.0.0",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "eslint": "^8.0.0",
-    "eslint-config-next": "^14.0.0",
-    "tailwindcss": "^3.3.0",
-    "autoprefixer": "^10.4.0",
-    "postcss": "^8.4.0"
-  }
-}`,
+    if (file.type === 'file') {
+      try {
+        const response = await fetch(`/api/files?action=read&path=${encodeURIComponent(file.path)}`)
+        if (response.ok) {
+          const data = await response.json()
+          setCode(data.content)
+        } else {
+          setCode(`// Error loading file: ${file.name}`)
+        }
+      } catch (error) {
+        console.error('Failed to load file:', error)
+        setCode(`// Error loading file: ${file.name}`)
+      }
     }
+  }
 
-    setCode(
-      sampleCode[file.name as keyof typeof sampleCode] ||
-        `// Content of ${file.name}\n\n// This is a placeholder for the actual file content`,
-    )
+  const handleFileOpen = async (file: FileInfo) => {
+    await handleFileSelect(file)
+  }
+
+  const handleSave = async (content: string) => {
+    if (currentFile) {
+      try {
+        const response = await fetch('/api/files', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'write',
+            path: currentFile.path,
+            content: content,
+          }),
+        })
+        
+        if (response.ok) {
+          addNotification('File saved successfully!', 'success')
+        } else {
+          addNotification('Failed to save file', 'error')
+        }
+      } catch (error) {
+        console.error('Save failed:', error)
+        addNotification('Failed to save file', 'error')
+      }
+    }
+  }
+
+  const getLanguageFromExtension = (extension?: string) => {
+    if (!extension) return 'text'
+    const languageMap: Record<string, string> = {
+      '.js': 'javascript',
+      '.jsx': 'javascript',
+      '.ts': 'typescript',
+      '.tsx': 'typescript',
+      '.py': 'python',
+      '.java': 'java',
+      '.cpp': 'cpp',
+      '.c': 'c',
+      '.php': 'php',
+      '.rb': 'ruby',
+      '.go': 'go',
+      '.rs': 'rust',
+      '.swift': 'swift',
+      '.kt': 'kotlin',
+      '.html': 'html',
+      '.css': 'css',
+      '.scss': 'scss',
+      '.json': 'json',
+      '.md': 'markdown',
+      '.xml': 'xml',
+      '.yaml': 'yaml',
+      '.yml': 'yaml',
+    }
+    return languageMap[extension.toLowerCase()] || 'text'
   }
 
   return (
@@ -1900,19 +1890,66 @@ export function Button({
 
         {/* Main Content */}
         <div className="flex-1 flex">
-          {/* File Explorer */}
-          <FileExplorer onFileSelect={handleFileSelect} />
-
-          <Separator orientation="vertical" />
-
-          {/* Editor Area */}
-          <div className="flex-1 p-4">
-            <CodeEditor value={code} onChange={setCode} language="typescript" fileName={currentFile.name} />
+          {/* Left Sidebar */}
+          <div className="flex">
+            <Tabs value={activePanel} onValueChange={(value) => setActivePanel(value as any)} className="w-80">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="explorer">Explorer</TabsTrigger>
+                <TabsTrigger value="git">Git</TabsTrigger>
+                <TabsTrigger value="ai">AI</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="explorer" className="mt-0">
+                <FileExplorerComponent 
+                  onFileSelect={handleFileSelect} 
+                  onFileOpen={handleFileOpen}
+                />
+              </TabsContent>
+              
+              <TabsContent value="git" className="mt-0">
+                <GitPanel />
+              </TabsContent>
+              
+              <TabsContent value="ai" className="mt-0">
+                {currentFile && (
+                  <AIChat 
+                    currentFile={{
+                      id: currentFile.path,
+                      name: currentFile.name,
+                      type: currentFile.type === 'directory' ? 'folder' : 'file',
+                      path: currentFile.path,
+                    }} 
+                    currentCode={code} 
+                  />
+                )}
+              </TabsContent>
+            </Tabs>
           </div>
 
           <Separator orientation="vertical" />
 
-          <AIChat currentFile={currentFile} currentCode={code} />
+          {/* Editor Area */}
+          <div className="flex-1">
+            {currentFile ? (
+              <AdvancedEditor
+                filePath={currentFile.path}
+                content={code}
+                language={getLanguageFromExtension(currentFile.extension)}
+                onSave={handleSave}
+                onRun={() => addNotification('Running code...', 'info')}
+              />
+            ) : (
+              <div className="flex-1 flex items-center justify-center bg-muted/20">
+                <div className="text-center space-y-4">
+                  <FileText className="w-16 h-16 mx-auto text-muted-foreground" />
+                  <div>
+                    <h3 className="text-lg font-semibold">Welcome to Cursor Clone</h3>
+                    <p className="text-muted-foreground">Select a file from the explorer to start coding</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         <TerminalComponent isVisible={isTerminalVisible} onClose={() => setIsTerminalVisible(false)} />
