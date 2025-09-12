@@ -176,9 +176,15 @@ importers:
       react-hook-form:
         specifier: ^7.60.0
         version: 7.60.0(react@19.0.0)
+      react-hotkeys-hook:
+        specifier: ^5.1.0
+        version: 5.1.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react-resizable-panels:
         specifier: ^2.1.7
         version: 2.1.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react-split-pane:
+        specifier: ^0.1.92
+        version: 0.1.92(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       recharts:
         specifier: 2.15.4
         version: 2.15.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -2469,11 +2475,20 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
 
+  react-hotkeys-hook@5.1.0:
+    resolution: {integrity: sha512-GCNGXjBzV9buOS3REoQFmSmE4WTvBhYQ0YrAeeMZI83bhXg3dRWsLHXDutcVDdEjwJqJCxk5iewWYX5LtFUd7g==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
   react-is@18.3.1:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
+
+  react-lifecycles-compat@3.0.4:
+    resolution: {integrity: sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==}
 
   react-remove-scroll-bar@2.3.8:
     resolution: {integrity: sha512-9r+yi9+mgU33AKcj6IbT9oRCO78WriSj6t/cF8DWBZJ9aOGPOTEDvdUDz1FwKim7QXWwmHqtdHnRJfhAxEG46Q==}
@@ -2506,6 +2521,15 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  react-split-pane@0.1.92:
+    resolution: {integrity: sha512-GfXP1xSzLMcLJI5BM36Vh7GgZBpy+U/X0no+VM3fxayv+p1Jly5HpMofZJraeaMl73b3hvlr+N9zJKvLB/uz9w==}
+    peerDependencies:
+      react: ^16.0.0-0
+      react-dom: ^16.0.0-0
+
+  react-style-proptype@3.2.2:
+    resolution: {integrity: sha512-ywYLSjNkxKHiZOqNlso9PZByNEY+FTyh3C+7uuziK0xFXu9xzdyfHwg4S9iyiRRoPCR4k2LqaBBsWVmSBwCWYQ==}
 
   react-style-singleton@2.2.3:
     resolution: {integrity: sha512-b6jSvxvVnyptAiLjbkWLE/lOnR4lfTtDAl+eUC7RZy+QQWc6wRzIV2CE6xBuMmDxc2qIihtDCZD5NPOFl7fRBQ==}
@@ -4923,9 +4947,16 @@ snapshots:
     dependencies:
       react: 19.0.0
 
+  react-hotkeys-hook@5.1.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+    dependencies:
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+
   react-is@16.13.1: {}
 
   react-is@18.3.1: {}
+
+  react-lifecycles-compat@3.0.4: {}
 
   react-remove-scroll-bar@2.3.8(@types/react@19.0.0)(react@19.0.0):
     dependencies:
@@ -4958,6 +4989,18 @@ snapshots:
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
       react-transition-group: 4.4.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+
+  react-split-pane@0.1.92(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+    dependencies:
+      prop-types: 15.8.1
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+      react-lifecycles-compat: 3.0.4
+      react-style-proptype: 3.2.2
+
+  react-style-proptype@3.2.2:
+    dependencies:
+      prop-types: 15.8.1
 
   react-style-singleton@2.2.3(@types/react@19.0.0)(react@19.0.0):
     dependencies:

@@ -22,9 +22,7 @@ import { Switch } from "@/components/ui/switch"
 import { Progress } from "@/components/ui/progress"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { AdvancedEditor } from "@/components/advanced-editor"
-import { GitPanel } from "@/components/git-panel"
-import { FileExplorer as FileExplorerComponent } from "@/components/file-explorer"
+import { ProfessionalLayout } from "@/components/professional-layout"
 import {
   FileText,
   Folder,
@@ -1670,47 +1668,10 @@ interface FileInfo {
 }
 
 export default function Home() {
-  const [currentFile, setCurrentFile] = useState<FileInfo | null>(null)
-  const [code, setCode] = useState('')
-  const [isTerminalVisible, setIsTerminalVisible] = useState(false)
-  const [isProjectManagementOpen, setIsProjectManagementOpen] = useState(false)
-  const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false)
-  const [commandPalette, setCommandPalette] = useState(false)
   const [notifications, setNotifications] = useState<
     Array<{ id: string; message: string; type: "success" | "error" | "info" }>
   >([])
-  const [activePanel, setActivePanel] = useState<'explorer' | 'git' | 'ai'>('explorer')
 
-  const handleKeyboardShortcuts = useCallback(
-    (e: KeyboardEvent) => {
-      // Cmd/Ctrl + K for command palette
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault()
-        setCommandPalette(true)
-      }
-      // Cmd/Ctrl + ` for terminal
-      if ((e.metaKey || e.ctrlKey) && e.key === "`") {
-        e.preventDefault()
-        setIsTerminalVisible(!isTerminalVisible)
-      }
-      // Cmd/Ctrl + , for settings
-      if ((e.metaKey || e.ctrlKey) && e.key === ",") {
-        e.preventDefault()
-        setIsProjectManagementOpen(true)
-      }
-      // Cmd/Ctrl + S for save
-      if ((e.metaKey || e.ctrlKey) && e.key === "s") {
-        e.preventDefault()
-        addNotification("File saved successfully!", "success")
-      }
-      // Cmd/Ctrl + ? for keyboard shortcuts
-      if ((e.metaKey || e.ctrlKey) && e.key === "?") {
-        e.preventDefault()
-        setShowKeyboardShortcuts(true)
-      }
-    },
-    [isTerminalVisible],
-  )
 
   const addNotification = (message: string, type: "success" | "error" | "info") => {
     const id = Date.now().toString()
@@ -1720,396 +1681,47 @@ export default function Home() {
     }, 3000)
   }
 
-  useEffect(() => {
-    document.addEventListener("keydown", handleKeyboardShortcuts)
-    return () => document.removeEventListener("keydown", handleKeyboardShortcuts)
-  }, [handleKeyboardShortcuts])
 
-  const handleFileSelect = async (file: FileInfo) => {
-    setCurrentFile(file)
-    if (file.type === 'file') {
-      try {
-        const response = await fetch(`/api/files?action=read&path=${encodeURIComponent(file.path)}`)
-        if (response.ok) {
-          const data = await response.json()
-          setCode(data.content)
-        } else {
-          setCode(`// Error loading file: ${file.name}`)
-        }
-      } catch (error) {
-        console.error('Failed to load file:', error)
-        setCode(`// Error loading file: ${file.name}`)
-      }
-    }
-  }
 
-  const handleFileOpen = async (file: FileInfo) => {
-    await handleFileSelect(file)
-  }
-
-  const handleSave = async (content: string) => {
-    if (currentFile) {
-      try {
-        const response = await fetch('/api/files', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'write',
-            path: currentFile.path,
-            content: content,
-          }),
-        })
-        
-        if (response.ok) {
-          addNotification('File saved successfully!', 'success')
-        } else {
-          addNotification('Failed to save file', 'error')
-        }
-      } catch (error) {
-        console.error('Save failed:', error)
-        addNotification('Failed to save file', 'error')
-      }
-    }
-  }
-
-  const getLanguageFromExtension = (extension?: string) => {
-    if (!extension) return 'text'
-    const languageMap: Record<string, string> = {
-      '.js': 'javascript',
-      '.jsx': 'javascript',
-      '.ts': 'typescript',
-      '.tsx': 'typescript',
-      '.py': 'python',
-      '.java': 'java',
-      '.cpp': 'cpp',
-      '.c': 'c',
-      '.php': 'php',
-      '.rb': 'ruby',
-      '.go': 'go',
-      '.rs': 'rust',
-      '.swift': 'swift',
-      '.kt': 'kotlin',
-      '.html': 'html',
-      '.css': 'css',
-      '.scss': 'scss',
-      '.json': 'json',
-      '.md': 'markdown',
-      '.xml': 'xml',
-      '.yaml': 'yaml',
-      '.yml': 'yaml',
-    }
-    return languageMap[extension.toLowerCase()] || 'text'
-  }
 
   return (
     <TooltipProvider>
-      <div className="h-screen bg-background text-foreground flex flex-col relative">
-        <div className="h-12 bg-card border-b border-border flex items-center justify-between px-4 backdrop-blur-sm">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-gradient-to-br from-primary to-primary/80 rounded-md flex items-center justify-center shadow-sm">
-                <span className="text-primary-foreground font-bold text-xs">C</span>
-              </div>
-              <span className="font-semibold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text">
-                Cursor Clone
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <GitBranch className="w-4 h-4" />
-              <span>main</span>
-              <Badge variant="secondary" className="text-xs animate-pulse">
-                2 changes
-              </Badge>
+      <ProfessionalLayout 
+        onNotification={addNotification} 
+        AIChatComponent={AIChat}
+        TerminalComponent={TerminalComponent}
+      />
+      
+      {/* Notifications */}
+      <div className="fixed top-4 right-4 space-y-2 z-50">
+        {notifications.map((notification) => (
+          <div
+            key={notification.id}
+            className={`p-4 rounded-lg shadow-lg border max-w-sm ${
+              notification.type === "success"
+                ? "bg-green-50 border-green-200 text-green-800"
+                : notification.type === "error"
+                ? "bg-red-50 border-red-200 text-red-800"
+                : "bg-blue-50 border-blue-200 text-blue-800"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">{notification.message}</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0"
+                onClick={() =>
+                  setNotifications((prev) =>
+                    prev.filter((n) => n.id !== notification.id)
+                  )
+                }
+              >
+                <X className="w-4 h-4" />
+              </Button>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => setCommandPalette(true)}
-                  className="transition-all duration-200 hover:scale-105 hover:bg-primary/10"
-                >
-                  <Search className="w-4 h-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Command Palette (⌘K)</p>
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => setIsTerminalVisible(!isTerminalVisible)}
-                  className={`transition-all duration-200 hover:scale-105 ${
-                    isTerminalVisible ? "bg-primary/10 text-primary shadow-sm" : ""
-                  }`}
-                >
-                  <Terminal className="w-4 h-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Toggle Terminal (⌘`)</p>
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => setIsProjectManagementOpen(true)}
-                  className="transition-all duration-200 hover:scale-105 hover:bg-primary/10"
-                >
-                  <Settings className="w-4 h-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Project Settings (⌘,)</p>
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => setShowKeyboardShortcuts(true)}
-                  className="transition-all duration-200 hover:scale-105 hover:bg-primary/10"
-                >
-                  <Keyboard className="w-4 h-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Keyboard Shortcuts (⌘?)</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-        </div>
-
-        {/* Main Content */}
-        <div className="flex-1 flex">
-          {/* Left Sidebar */}
-          <div className="flex">
-            <Tabs value={activePanel} onValueChange={(value) => setActivePanel(value as any)} className="w-80">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="explorer">Explorer</TabsTrigger>
-                <TabsTrigger value="git">Git</TabsTrigger>
-                <TabsTrigger value="ai">AI</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="explorer" className="mt-0">
-                <FileExplorerComponent 
-                  onFileSelect={handleFileSelect} 
-                  onFileOpen={handleFileOpen}
-                />
-              </TabsContent>
-              
-              <TabsContent value="git" className="mt-0">
-                <GitPanel />
-              </TabsContent>
-              
-              <TabsContent value="ai" className="mt-0">
-                {currentFile && (
-                  <AIChat 
-                    currentFile={{
-                      id: currentFile.path,
-                      name: currentFile.name,
-                      type: currentFile.type === 'directory' ? 'folder' : 'file',
-                      path: currentFile.path,
-                    }} 
-                    currentCode={code} 
-                  />
-                )}
-              </TabsContent>
-            </Tabs>
-          </div>
-
-          <Separator orientation="vertical" />
-
-          {/* Editor Area */}
-          <div className="flex-1">
-            {currentFile ? (
-              <AdvancedEditor
-                filePath={currentFile.path}
-                content={code}
-                language={getLanguageFromExtension(currentFile.extension)}
-                onSave={handleSave}
-                onRun={() => addNotification('Running code...', 'info')}
-              />
-            ) : (
-              <div className="flex-1 flex items-center justify-center bg-muted/20">
-                <div className="text-center space-y-4">
-                  <FileText className="w-16 h-16 mx-auto text-muted-foreground" />
-                  <div>
-                    <h3 className="text-lg font-semibold">Welcome to Cursor Clone</h3>
-                    <p className="text-muted-foreground">Select a file from the explorer to start coding</p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <TerminalComponent isVisible={isTerminalVisible} onClose={() => setIsTerminalVisible(false)} />
-        <ProjectManagement isOpen={isProjectManagementOpen} onClose={() => setIsProjectManagementOpen(false)} />
-
-        <Dialog open={commandPalette} onOpenChange={setCommandPalette}>
-          <DialogContent className="max-w-2xl animate-in fade-in-0 zoom-in-95 duration-200">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Search className="w-5 h-5" />
-                Command Palette
-              </DialogTitle>
-              <DialogDescription>Type a command or search for files, actions, and settings.</DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
-              <Input
-                placeholder="Type a command..."
-                className="text-lg h-12 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                autoFocus
-              />
-              <div className="space-y-2 max-h-64 overflow-y-auto">
-                {[
-                  {
-                    icon: Terminal,
-                    label: "Toggle Terminal",
-                    shortcut: "⌘`",
-                    action: () => setIsTerminalVisible(!isTerminalVisible),
-                  },
-                  {
-                    icon: Settings,
-                    label: "Open Settings",
-                    shortcut: "⌘,",
-                    action: () => setIsProjectManagementOpen(true),
-                  },
-                  {
-                    icon: Save,
-                    label: "Save File",
-                    shortcut: "⌘S",
-                    action: () => addNotification("File saved!", "success"),
-                  },
-                  {
-                    icon: Play,
-                    label: "Run Code",
-                    shortcut: "⌘R",
-                    action: () => addNotification("Running code...", "info"),
-                  },
-                  {
-                    icon: GitCommit,
-                    label: "Commit Changes",
-                    shortcut: "⌘⇧C",
-                    action: () => addNotification("Committing changes...", "info"),
-                  },
-                  {
-                    icon: Keyboard,
-                    label: "Keyboard Shortcuts",
-                    shortcut: "⌘?",
-                    action: () => setShowKeyboardShortcuts(true),
-                  },
-                ].map((command, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-all duration-200 hover:scale-[1.02]"
-                    onClick={() => {
-                      command.action()
-                      setCommandPalette(false)
-                    }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <command.icon className="w-4 h-4 text-primary" />
-                      <span>{command.label}</span>
-                    </div>
-                    <Badge variant="secondary" className="text-xs">
-                      {command.shortcut}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-
-        <Dialog open={showKeyboardShortcuts} onOpenChange={setShowKeyboardShortcuts}>
-          <DialogContent className="max-w-3xl animate-in fade-in-0 zoom-in-95 duration-200">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Keyboard className="w-5 h-5" />
-                Keyboard Shortcuts
-              </DialogTitle>
-              <DialogDescription>Master these shortcuts to boost your productivity.</DialogDescription>
-            </DialogHeader>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <h3 className="font-semibold text-primary">General</h3>
-                <div className="space-y-2">
-                  {[
-                    { keys: ["⌘", "K"], description: "Command Palette" },
-                    { keys: ["⌘", "S"], description: "Save File" },
-                    { keys: ["⌘", ","], description: "Open Settings" },
-                    { keys: ["⌘", "?"], description: "Show Shortcuts" },
-                  ].map((shortcut, index) => (
-                    <div key={index} className="flex items-center justify-between">
-                      <span className="text-sm">{shortcut.description}</span>
-                      <div className="flex gap-1">
-                        {shortcut.keys.map((key, keyIndex) => (
-                          <Badge key={keyIndex} variant="outline" className="text-xs font-mono">
-                            {key}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="space-y-4">
-                <h3 className="font-semibold text-primary">Development</h3>
-                <div className="space-y-2">
-                  {[
-                    { keys: ["⌘", "`"], description: "Toggle Terminal" },
-                    { keys: ["⌘", "R"], description: "Run Code" },
-                    { keys: ["⌘", "⇧", "C"], description: "Commit Changes" },
-                    { keys: ["⌘", "⇧", "P"], description: "Git Push" },
-                  ].map((shortcut, index) => (
-                    <div key={index} className="flex items-center justify-between">
-                      <span className="text-sm">{shortcut.description}</span>
-                      <div className="flex gap-1">
-                        {shortcut.keys.map((key, keyIndex) => (
-                          <Badge key={keyIndex} variant="outline" className="text-xs font-mono">
-                            {key}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-
-        <div className="fixed top-4 right-4 z-50 space-y-2">
-          {notifications.map((notification) => (
-            <div
-              key={notification.id}
-              className={`p-3 rounded-lg shadow-lg backdrop-blur-sm border animate-in slide-in-from-right-4 duration-300 ${
-                notification.type === "success"
-                  ? "bg-green-500/10 border-green-500/20 text-green-700 dark:text-green-300"
-                  : notification.type === "error"
-                    ? "bg-red-500/10 border-red-500/20 text-red-700 dark:text-red-300"
-                    : "bg-blue-500/10 border-blue-500/20 text-blue-700 dark:text-blue-300"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                {notification.type === "success" && <CheckCircle className="w-4 h-4" />}
-                {notification.type === "error" && <XCircle className="w-4 h-4" />}
-                {notification.type === "info" && <AlertCircle className="w-4 h-4" />}
-                <span className="text-sm font-medium">{notification.message}</span>
-              </div>
-            </div>
-          ))}
-        </div>
+        ))}
       </div>
     </TooltipProvider>
   )
