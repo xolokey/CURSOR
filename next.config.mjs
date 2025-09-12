@@ -11,8 +11,6 @@ const nextConfig = {
   },
   // Enable standalone output for Docker
   output: 'standalone',
-  // Optimize for production
-  swcMinify: true,
   // Enable compression
   compress: true,
   // Optimize bundle

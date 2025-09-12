@@ -464,10 +464,16 @@ function FileExplorer({ onFileSelect }: { onFileSelect: (file: FileItem) => void
 
 // Enhanced AI Chat Component with real AI integration
 function AIChat({ currentFile, currentCode }: { currentFile: FileItem; currentCode: string }) {
-  const [messages, setMessages] = useState([
+  type Message = {
+    id: string;
+    role: "assistant" | "user";
+    content: string;
+    timestamp: Date;
+  };
+  const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
-      role: "assistant" as const,
+      role: "assistant",
       content:
         "Hello! I'm your AI coding assistant. I can help you with code generation, debugging, refactoring, and explanations. What would you like to work on?",
       timestamp: new Date(),
@@ -476,42 +482,70 @@ function AIChat({ currentFile, currentCode }: { currentFile: FileItem; currentCo
   const [input, setInput] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   const [chatMode, setChatMode] = useState<"chat" | "code" | "debug" | "explain">("chat")
+  const [aiProvider, setAiProvider] = useState<"gemini" | "perplexity">("gemini")
   const scrollAreaRef = useRef<HTMLDivElement>(null)
 
-  // Simulate AI response with context awareness
+  // Real AI response with API integration
   const getAIResponse = async (userMessage: string, mode: string): Promise<string> => {
-    // In a real implementation, you would use the AI SDK here
-    // const { text } = await generateText({
-    //   model: openai("gpt-4"),
-    //   prompt: `Context: Current file is ${currentFile.name}\n\nCode:\n${currentCode}\n\nUser: ${userMessage}`,
-    // })
+    try {
+      const response = await fetch(`/api/ai/${aiProvider}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: [
+            {
+              role: 'system',
+              content: `You are an AI coding assistant. Current file: ${currentFile.name}\n\nCode:\n${currentCode}\n\nMode: ${mode}`
+            },
+            {
+              role: 'user',
+              content: userMessage
+            }
+          ],
+          context: `File: ${currentFile.name}, Mode: ${mode}`
+        }),
+      });
 
-    // Simulated responses based on mode and context
-    const responses = {
-      chat: [
-        `I can see you're working on ${currentFile.name}. How can I help you with this file?`,
-        "I'm here to assist with your coding needs. What specific task would you like help with?",
-        "Based on your current code, I can help with improvements, debugging, or new features.",
-      ],
-      code: [
-        `Here's a code suggestion for ${currentFile.name}:\n\n\`\`\`typescript\n// Enhanced version of your code\nfunction improvedFunction() {\n  // Implementation here\n  return result;\n}\n\`\`\``,
-        "I can generate code for your specific use case. What functionality do you need?",
-        "Let me create a code snippet that addresses your requirements.",
-      ],
-      debug: [
-        `I've analyzed your ${currentFile.name} file. Here are potential issues I found:\n\n1. **Type Safety**: Consider adding proper TypeScript types\n2. **Error Handling**: Add try-catch blocks for async operations\n3. **Performance**: Optimize the rendering logic`,
-        "I can help debug your code. What specific error or issue are you encountering?",
-        "Let me review your code for potential bugs and improvements.",
-      ],
-      explain: [
-        `Let me explain what's happening in ${currentFile.name}:\n\nThis file appears to be a React component that handles user interactions. The main functionality includes:\n\n• State management with useState\n• Event handling for user actions\n• Conditional rendering based on state`,
-        "I can explain any part of your code. What specific section would you like me to clarify?",
-        "Here's a breakdown of the code structure and its purpose.",
-      ],
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('No response body');
+      }
+
+      let result = '';
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+        
+        for (const line of lines) {
+          if (line.startsWith('0:')) {
+            try {
+              const data = JSON.parse(line.slice(2));
+              if (data.type === 'text-delta' && data.textDelta) {
+                result += data.textDelta;
+              }
+            } catch (e) {
+              // Ignore parsing errors for malformed chunks
+            }
+          }
+        }
+      }
+
+      return result || `I'm having trouble connecting to the ${aiProvider} API. Please check your API key configuration.`;
+    } catch (error) {
+      console.error('AI API error:', error);
+      return `Sorry, I encountered an error while processing your request. Please try again or check your API configuration.`;
     }
-
-    const modeResponses = responses[mode as keyof typeof responses] || responses.chat
-    return modeResponses[Math.floor(Math.random() * modeResponses.length)]
   }
 
   const sendMessage = async () => {
@@ -639,6 +673,22 @@ function AIChat({ currentFile, currentCode }: { currentFile: FileItem; currentCo
           </TabsList>
         </Tabs>
 
+        {/* AI Provider Selection */}
+        <div className="mt-2 flex items-center gap-2">
+          <Label htmlFor="ai-provider" className="text-xs text-muted-foreground">
+            AI Provider:
+          </Label>
+          <select
+            id="ai-provider"
+            value={aiProvider}
+            onChange={(e) => setAiProvider(e.target.value as "gemini" | "perplexity")}
+            className="text-xs bg-muted border border-border rounded px-2 py-1"
+          >
+            <option value="gemini">Gemini</option>
+            <option value="perplexity">Perplexity</option>
+          </select>
+        </div>
+
         {/* Current file context */}
         <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
           {getFileIcon(currentFile.name)}
@@ -746,7 +796,21 @@ function AIChat({ currentFile, currentCode }: { currentFile: FileItem; currentCo
 }
 
 function TerminalComponent({ isVisible, onClose }: { isVisible: boolean; onClose: () => void }) {
-  const [terminals, setTerminals] = useState([
+  interface TerminalEntry {
+    id: string
+    type: "command" | "output" | "error"
+    content: string
+    timestamp: Date
+  }
+
+  interface Terminal {
+    id: string
+    name: string
+    history: TerminalEntry[]
+    currentDirectory: string
+  }
+
+  const [terminals, setTerminals] = useState<Terminal[]>([
     { id: "1", name: "Terminal 1", history: [], currentDirectory: "~/cursor-clone" },
   ])
   const [activeTerminal, setActiveTerminal] = useState("1")
@@ -755,13 +819,6 @@ function TerminalComponent({ isVisible, onClose }: { isVisible: boolean; onClose
   const [historyIndex, setHistoryIndex] = useState(-1)
   const inputRef = useRef<HTMLInputElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
-
-  interface TerminalEntry {
-    id: string
-    type: "command" | "output" | "error"
-    content: string
-    timestamp: Date
-  }
 
   // Simulate command execution
   const executeCommand = (command: string, terminalId: string) => {
