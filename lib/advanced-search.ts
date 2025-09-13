@@ -98,83 +98,6 @@ export interface FieldMetadata {
 export interface IndexAnalyzer {
   name: string;
   type: 'standard' | 'keyword' | 'whitespace' | 'stop' | 'stemming' | 'custom';
-  configuration: AnalyzerConfig;
-  filters: AnalyzerFilter[];
-  tokenizer: AnalyzerTokenizer;
-  metadata: AnalyzerMetadata;
-}
-
-export interface AnalyzerConfig {
-  language: string;
-  caseSensitive: boolean;
-  removePunctuation: boolean;
-  removeNumbers: boolean;
-  removeStopWords: boolean;
-  stemming: boolean;
-  lemmatization: boolean;
-  synonyms: boolean;
-  custom: Record<string, any>;
-}
-
-export interface AnalyzerFilter {
-  type: 'lowercase' | 'uppercase' | 'stop' | 'stemming' | 'synonym' | 'custom';
-  configuration: Record<string, any>;
-  order: number;
-}
-
-export interface AnalyzerTokenizer {
-  type: 'standard' | 'keyword' | 'whitespace' | 'ngram' | 'custom';
-  configuration: Record<string, any>;
-}
-
-export interface AnalyzerMetadata {
-  language: string;
-  framework: string;
-  patterns: string[];
-  concepts: string[];
-  dependencies: string[];
-  architecture: string;
-  design: string;
-  testing: string;
-  documentation: string;
-  compliance: string;
-  quality: number;
-  complexity: number;
-  maintainability: number;
-  testability: number;
-  performance: number;
-  security: number;
-  reliability: number;
-  reusability: number;
-}
-
-export interface IndexSettings {
-  shards: number;
-  replicas: number;
-  refreshInterval: number;
-  maxResultWindow: number;
-  maxNgramDiff: number;
-  maxShingleDiff: number;
-  analysis: AnalysisSettings;
-  metadata: SettingsMetadata;
-}
-
-export interface AnalysisSettings {
-  analyzers: Record<string, any>;
-  tokenizers: Record<string, any>;
-  filters: Record<string, any>;
-  charFilters: Record<string, any>;
-}
-
-export interface SettingsMetadata {
-  language: string;
-  framework: string;
-  patterns: string[];
-  concepts: string[];
-  dependencies: string[];
-  architecture: string;
-  design: string;
-  testing: string;
   documentation: string;
   compliance: string;
   quality: number;
@@ -546,58 +469,6 @@ export interface SearchMetadata {
   version: string;
 }
 
-// ...existing code...
-      ...engine,
-      id: engineId,
-      metadata: {
-        language: '',
-        framework: '',
-        patterns: [],
-        concepts: [],
-        dependencies: [],
-        architecture: '',
-        design: '',
-        testing: '',
-        documentation: '',
-        compliance: '',
-        quality: 0,
-        complexity: 0,
-        maintainability: 0,
-        testability: 0,
-        performance: 0,
-        security: 0,
-        reliability: 0,
-        reusability: 0,
-        totalEngines: 0,
-        totalIndexes: 0,
-        totalQueries: 0,
-        totalResults: 0,
-        lastUpdate: new Date(),
-        author: '',
-        version: '1.0.0'
-      },
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-
-    this.engines.set(engineId, newEngine);
-    return engineId;
-  }
-
-  async createIndex(index: Omit<SearchIndex, 'id' | 'createdAt' | 'updatedAt' | 'metadata'>): Promise<string> {
-    const indexId = `index_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
-    const newIndex: SearchIndex = {
-      ...index,
-      id: indexId,
-      metadata: {
-        language: '',
-        framework: '',
-        patterns: [],
-        concepts: [],
-        dependencies: [],
-        architecture: '',
-        design: '',
         testing: '',
         documentation: '',
         compliance: '',
@@ -1355,32 +1226,32 @@ export class AdvancedSearchSystem {
     const newIndex: SearchIndex = {
       ...index,
       id: indexId,
-      metadata: {
-        language: '',
-        framework: '',
-        patterns: [],
-        concepts: [],
-        dependencies: [],
-        architecture: '',
-        design: '',
-        testing: '',
-        documentation: '',
-        compliance: '',
-        quality: 0,
-        complexity: 0,
-        maintainability: 0,
-        testability: 0,
-        performance: 0,
-        security: 0,
-        reliability: 0,
-        reusability: 0,
-        totalDocuments: index.documents.length,
-        totalFields: index.fields.length,
-        totalAnalyzers: index.analyzers.length,
-        lastUpdate: new Date(),
-        author: '',
-        version: '1.0.0'
-      },
+        metadata: {
+          language: '',
+          framework: '',
+          patterns: [],
+          concepts: [],
+          dependencies: [],
+          architecture: '',
+          design: '',
+          testing: '',
+          documentation: '',
+          compliance: '',
+          quality: 0,
+          complexity: 0,
+          maintainability: 0,
+          testability: 0,
+          performance: 0,
+          security: 0,
+          reliability: 0,
+          reusability: 0,
+          totalDocuments: index.documents ? index.documents.length : 0,
+          totalFields: index.fields ? index.fields.length : 0,
+          totalAnalyzers: index.analyzers ? index.analyzers.length : 0,
+          lastUpdate: new Date(),
+          author: '',
+          version: '1.0.0'
+        },
       createdAt: new Date(),
       updatedAt: new Date()
     };
