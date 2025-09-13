@@ -43,11 +43,6 @@ pids
 *.seed
 *.pid.lock
 
-<<<<<<< Current (Your changes)
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-=======
 # Coverage directory used by tools like istanbul
 coverage/
 *.lcov
@@ -97,4 +92,3 @@ jspm_packages/
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
->>>>>>> Incoming (Background Agent changes)

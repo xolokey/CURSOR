@@ -97,7 +97,7 @@ console.log(result.highlights);
 - `npm run build` - Compile TypeScript to JavaScript
 - `npm run dev` - Run the example with ts-node
 - `npm start` - Run the compiled example
-- `npm test` - Run tests (when implemented)
+- `npm test` - Run comprehensive test suite
 - `npm run lint` - Lint the code
 
 ## Architecture
