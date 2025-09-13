@@ -1,138 +1,138 @@
-# Cursor Clone - AI Code Editor
+# Advanced Search System
 
-A modern, AI-powered code editor built with Next.js 15, featuring Gemini and Perplexity AI integration for intelligent coding assistance.
+A comprehensive TypeScript-based search engine with multiple query types, indexing strategies, and advanced features.
 
 ## Features
 
-- 🚀 **Modern Code Editor** - Clean, responsive interface inspired by Cursor
-- 🤖 **AI Integration** - Gemini and Perplexity AI assistants
-- 📁 **File Explorer** - Intuitive project navigation
-- 💻 **Terminal** - Built-in terminal with command history
-- 🎨 **Dark/Light Theme** - Seamless theme switching
-- 📱 **PWA Ready** - Install as a desktop app
-- ⚡ **Real-time AI** - Stream responses from AI providers
-- 🔧 **Project Management** - Git integration and settings
+- **Multiple Index Types**: Inverted, Vector, Graph, and Hybrid indexing
+- **Query Types**: Full-text, Semantic, Fuzzy, and Regex search
+- **Engine Modes**: Standalone, Distributed, and Federated configurations
+- **Advanced Features**: Highlighting, Pagination, Sorting, and Aggregations
+- **Performance Metrics**: Execution time tracking and caching support
+- **Fuzzy Matching**: Levenshtein distance-based approximate string matching
 
-## AI Providers
+## Installation
 
-### Gemini
-- Google's advanced AI model
-- Excellent for code generation and explanations
-- Fast response times
-
-### Perplexity
-- Real-time information access
-- Up-to-date documentation and examples
-- Research and fact-checking capabilities
-
-## Getting Started
-
-### Prerequisites
-- Node.js 18+ 
-- pnpm (recommended) or npm
-
-### Installation
-
-1. Clone the repository
 ```bash
-git clone <your-repo-url>
-cd cursor-clone
+npm install
 ```
 
-2. Install dependencies
-```bash
-pnpm install
+## Usage
+
+### Basic Example
+
+```typescript
+import { AdvancedSearchSystem } from './AdvancedSearchSystem';
+
+// Create search system
+const searchSystem = new AdvancedSearchSystem();
+
+// Create engine
+const engine = searchSystem.createEngine("MainEngine", "standalone", {
+  cacheEnabled: true,
+  cacheTTL: 60000,
+  maxResults: 100,
+  timeoutMs: 2000,
+  rankingAlgorithm: "bm25"
+});
+
+// Create index
+const index = searchSystem.createIndex(engine.id, "BooksIndex", "inverted", ["title", "author"]);
+
+// Add documents
+searchSystem.addDocument(engine.id, index.id, {
+  title: "Deep Learning",
+  author: "Ian Goodfellow"
+});
+
+// Create and execute query
+const query = searchSystem.createQuery(engine.id, "full_text", "learning");
+const result = searchSystem.executeQuery(engine.id, query.id);
+
+console.log("Search Result:", result);
 ```
 
-3. Set up environment variables
-```bash
-cp env.example .env.local
+### Query Types
+
+#### Full-Text Search
+```typescript
+const query = searchSystem.createQuery(engine.id, "full_text", "machine learning");
 ```
 
-4. Add your API keys to `.env.local`:
-```env
-GEMINI_API_KEY=your_gemini_api_key_here
-PERPLEXITY_API_KEY=your_perplexity_api_key_here
+#### Regex Search
+```typescript
+const query = searchSystem.createQuery(engine.id, "regex", "^Deep.*");
 ```
 
-5. Run the development server
-```bash
-pnpm dev
+#### Fuzzy Search
+```typescript
+const query = searchSystem.createQuery(engine.id, "fuzzy", "algoritm"); // finds "algorithm"
 ```
 
-6. Open [http://localhost:3000](http://localhost:3000) in your browser
-
-## API Keys Setup
-
-### Gemini API Key
-1. Go to [Google AI Studio](https://aistudio.google.com/)
-2. Create a new API key
-3. Add it to your `.env.local` file
-
-### Perplexity API Key
-1. Visit [Perplexity API](https://www.perplexity.ai/settings/api)
-2. Generate an API key
-3. Add it to your `.env.local` file
-
-## Deployment
-
-### Vercel (Recommended)
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Add environment variables in Vercel dashboard
-4. Deploy!
-
-### Manual Deployment
-```bash
-pnpm build
-pnpm start
+#### Semantic Search
+```typescript
+const query = searchSystem.createQuery(engine.id, "semantic", "artificial intelligence");
 ```
 
-## Tech Stack
+### Advanced Features
 
-- **Framework**: Next.js 15
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: Radix UI + shadcn/ui
-- **AI Integration**: Vercel AI SDK
-- **Theming**: next-themes
-- **Analytics**: Vercel Analytics
-
-## Project Structure
-
-```
-├── app/
-│   ├── api/ai/          # AI API routes
-│   ├── globals.css      # Global styles
-│   ├── layout.tsx       # Root layout
-│   ├── page.tsx         # Main editor page
-│   └── manifest.json    # PWA manifest
-├── components/
-│   └── ui/              # Reusable UI components
-├── lib/
-│   ├── ai.ts           # AI integration utilities
-│   └── utils.ts        # General utilities
-└── public/             # Static assets
+#### Sorting and Pagination
+```typescript
+const query = searchSystem.createQuery(engine.id, "full_text", "technology");
+query.sort = [{ field: "year", order: "desc" }];
+query.page = 1;
+query.pageSize = 10;
 ```
 
-## Contributing
+#### Highlighting
+```typescript
+const query = searchSystem.createQuery(engine.id, "full_text", "learning");
+query.highlight = true;
+const result = searchSystem.executeQuery(engine.id, query.id);
+console.log(result.highlights);
+```
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+## Scripts
+
+- `npm run build` - Compile TypeScript to JavaScript
+- `npm run dev` - Run the example with ts-node
+- `npm start` - Run the compiled example
+- `npm test` - Run tests (when implemented)
+- `npm run lint` - Lint the code
+
+## Architecture
+
+### Core Classes
+
+- **AdvancedSearchSystem**: Main system coordinator
+- **SearchEngine**: Engine configuration and management
+- **SearchIndex**: Document storage and indexing
+- **SearchQuery**: Query definition and parameters
+- **SearchResult**: Search results and metadata
+
+### Types
+
+- **IndexType**: "inverted" | "vector" | "graph" | "hybrid"
+- **QueryType**: "full_text" | "semantic" | "fuzzy" | "regex"
+- **EngineMode**: "standalone" | "distributed" | "federated"
+
+## Performance
+
+The system includes built-in performance tracking:
+- Query execution time
+- Result processing time
+- Cache hit/miss tracking
+- Document count and size metrics
+
+## Future Enhancements
+
+- Vector embeddings for semantic search
+- Distributed search across multiple nodes
+- Advanced aggregations and faceting
+- Real-time indexing
+- Machine learning-based ranking
+- Query suggestion and auto-completion
 
 ## License
 
-MIT License - see LICENSE file for details
-
-## Support
-
-For issues and questions:
-- Create an issue on GitHub
-- Check the documentation
-- Review the API key setup
-
----
-
-Built By Lokey using Next.js and React
+MIT
