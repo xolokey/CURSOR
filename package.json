@@ -1,8 +1,8 @@
 {
-  "name": "cursor-clone-with-advanced-search",
-  "version": "1.0.0",
+  "name": "comprehensive-ai-development-platform",
+  "version": "2.0.0",
   "private": true,
-  "description": "Cursor IDE clone with integrated Advanced Search System - A comprehensive TypeScript-based search engine with multiple query types and indexing strategies",
+  "description": "Comprehensive AI-Powered Development Platform - A complete development environment with AI coding intelligence, testing automation, DevOps, collaboration, analytics, security, and advanced features",
   "scripts": {
     "build": "next build",
     "dev": "next dev",
@@ -88,7 +88,6 @@
     "react-hook-form": "^7.60.0",
     "react-hotkeys-hook": "^5.1.0",
     "react-resizable-panels": "^2.1.7",
-    "react-split-pane": "^0.1.92",
     "recharts": "2.15.4",
     "simple-git": "^3.28.0",
     "socket.io": "^4.8.1",
@@ -98,7 +97,6 @@
     "tailwindcss-animate": "^1.0.7",
     "ts-jest": "^29.4.1",
     "ts-node": "^10.9.0",
-    "vaul": "^0.9.9",
     "webpack-bundle-analyzer": "^4.10.2",
     "zod": "3.25.76"
   },
@@ -118,14 +116,22 @@
     "npm": ">=8.0.0"
   },
   "keywords": [
-    "cursor-ide",
-    "code-editor",
-    "search-engine",
-    "full-text-search",
-    "fuzzy-search",
+    "ai-development-platform",
+    "ai-coding-assistant",
+    "intelligent-testing",
+    "devops-automation",
+    "collaboration-tools",
+    "analytics-insights",
+    "security-devsecops",
+    "multi-modal-coding",
+    "learning-onboarding",
+    "marketplace-plugins",
+    "advanced-features",
     "typescript",
     "nextjs",
-    "react"
+    "react",
+    "ai-agents",
+    "code-intelligence"
   ],
   "author": "Cursor Clone with Advanced Search System",
   "license": "MIT",
