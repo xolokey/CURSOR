@@ -16,12 +16,14 @@ import {
   Package,
   BarChart3,
   Users,
-  Zap
+  Zap,
+  Brain,
+  Code
 } from 'lucide-react';
 
 interface ActivityBarProps {
-  activePanel: string;
-  onPanelChange: (panel: string) => void;
+  activePanel: 'explorer' | 'search' | 'git' | 'ai' | 'debug' | 'extensions' | 'packages' | 'none';
+  onPanelChange: (panel: 'explorer' | 'search' | 'git' | 'ai' | 'debug' | 'extensions' | 'packages' | 'none') => void;
   notifications?: Record<string, number>;
 }
 
@@ -33,6 +35,7 @@ export function ActivityBar({ activePanel, onPanelChange, notifications = {} }: 
     { id: 'ai', icon: MessageSquare, label: 'AI Assistant', badge: notifications.ai },
     { id: 'debug', icon: Bug, label: 'Run and Debug', badge: notifications.debug },
     { id: 'extensions', icon: Package, label: 'Extensions', badge: notifications.extensions },
+    { id: 'packages', icon: Code, label: 'Package Manager', badge: notifications.packages },
     { id: 'database', icon: Database, label: 'Database', badge: notifications.database },
     { id: 'terminal', icon: Terminal, label: 'Terminal', badge: notifications.terminal },
     { id: 'performance', icon: BarChart3, label: 'Performance', badge: notifications.performance },
@@ -56,7 +59,7 @@ export function ActivityBar({ activePanel, onPanelChange, notifications = {} }: 
                 ? 'bg-sidebar-accent text-sidebar-foreground' 
                 : 'text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50'
             }`}
-            onClick={() => onPanelChange(activity.id)}
+            onClick={() => onPanelChange(activity.id as any)}
             title={activity.label}
           >
             <Icon className="w-5 h-5" />

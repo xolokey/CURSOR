@@ -135,4 +135,4 @@ For issues and questions:
 
 ---
 
-Built with ❤️ using Next.js and AI
+Built By Lokey using Next.js and React

@@ -11,6 +11,10 @@ import { Breadcrumb } from './breadcrumb';
 import { FileExplorer as FileExplorerComponent } from './file-explorer';
 import { GitPanel } from './git-panel';
 import { AdvancedEditor } from './advanced-editor';
+import { AdvancedAIPanel } from './advanced-ai-panel';
+import { DebugPanel } from './debug-panel';
+import { ExtensionMarketplace } from './extension-marketplace';
+import { PackageManager } from './package-manager';
 // AIChat and TerminalComponent will be passed as props
 import { Button } from '@/components/ui/button';
 import { 
@@ -26,7 +30,10 @@ import {
   Database, 
   Terminal, 
   BarChart3, 
-  Users 
+  Users,
+  Brain,
+  Code,
+  Zap 
 } from 'lucide-react';
 
 interface FileInfo {
@@ -58,13 +65,14 @@ interface ProfessionalLayoutProps {
 }
 
 export function ProfessionalLayout({ onNotification, AIChatComponent, TerminalComponent }: ProfessionalLayoutProps) {
-  const [activePanel, setActivePanel] = useState('explorer');
+  const [activePanel, setActivePanel] = useState<'explorer' | 'search' | 'git' | 'ai' | 'debug' | 'extensions' | 'packages' | 'none'>('explorer');
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [tabs, setTabs] = useState<Tab[]>([]);
   const [currentFile, setCurrentFile] = useState<FileInfo | null>(null);
   const [code, setCode] = useState('');
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isQuickOpenOpen, setIsQuickOpenOpen] = useState(false);
+  const [isAdvancedAIVisible, setIsAdvancedAIVisible] = useState(false);
   const [isTerminalVisible, setIsTerminalVisible] = useState(false);
   const [gitStatus, setGitStatus] = useState({
     current: 'main',
@@ -86,6 +94,7 @@ export function ProfessionalLayout({ onNotification, AIChatComponent, TerminalCo
   useHotkeys('ctrl+b', () => setActivePanel(activePanel === 'explorer' ? 'none' : 'explorer'));
   useHotkeys('ctrl+shift+g', () => setActivePanel('git'));
   useHotkeys('ctrl+shift+a', () => setActivePanel('ai'));
+  useHotkeys('ctrl+alt+a', () => setIsAdvancedAIVisible(!isAdvancedAIVisible));
 
   const handleFileSelect = async (file: FileInfo) => {
     setCurrentFile(file);
@@ -230,6 +239,9 @@ export function ProfessionalLayout({ onNotification, AIChatComponent, TerminalCo
       case 'ai-chat':
         setActivePanel('ai');
         break;
+      case 'toggle-advanced-ai':
+        setIsAdvancedAIVisible(!isAdvancedAIVisible);
+        break;
       default:
         onNotification?.(`Command: ${command}`, 'info');
     }
@@ -309,6 +321,19 @@ export function ProfessionalLayout({ onNotification, AIChatComponent, TerminalCo
             </div>
           </div>
         );
+      case 'debug':
+        return (
+          <DebugPanel 
+            currentFile={currentFile ? {
+              name: currentFile.name,
+              path: currentFile.path,
+            } : undefined}
+          />
+        );
+      case 'extensions':
+        return <ExtensionMarketplace />;
+      case 'packages':
+        return <PackageManager />;
       default:
         return null;
     }
@@ -349,6 +374,7 @@ export function ProfessionalLayout({ onNotification, AIChatComponent, TerminalCo
             ai: 0,
             debug: 0,
             extensions: 0,
+            packages: 0,
             database: 0,
             terminal: 0,
             performance: 0,
@@ -398,29 +424,54 @@ export function ProfessionalLayout({ onNotification, AIChatComponent, TerminalCo
           )}
 
           {/* Editor Area */}
-          <div className="flex-1">
-            {currentFile ? (
-              <AdvancedEditor
-                filePath={currentFile.path}
-                content={code}
-                language={getLanguageFromExtension(currentFile.extension)}
-                onSave={handleSave}
-                onRun={() => onNotification?.('Running code...', 'info')}
-              />
-            ) : (
-              <div className="flex-1 flex items-center justify-center bg-editor-background">
-                <div className="text-center space-y-4">
-                  <FileText className="w-16 h-16 mx-auto text-muted-foreground" />
-                  <div>
-                    <h3 className="text-lg font-semibold">Welcome to Cursor Clone</h3>
-                    <p className="text-muted-foreground">Select a file from the explorer to start coding</p>
-                  </div>
-                  <div className="flex flex-col gap-2 text-sm text-muted-foreground">
-                    <p>Press <kbd className="px-1 py-0.5 bg-muted rounded text-xs">Ctrl+P</kbd> to quick open files</p>
-                    <p>Press <kbd className="px-1 py-0.5 bg-muted rounded text-xs">Ctrl+Shift+P</kbd> to open command palette</p>
-                    <p>Press <kbd className="px-1 py-0.5 bg-muted rounded text-xs">Ctrl+`</kbd> to toggle terminal</p>
+          <div className="flex-1 flex">
+            <div className="flex-1">
+              {currentFile ? (
+                <AdvancedEditor
+                  filePath={currentFile.path}
+                  content={code}
+                  language={getLanguageFromExtension(currentFile.extension)}
+                  onSave={handleSave}
+                  onRun={() => onNotification?.('Running code...', 'info')}
+                />
+              ) : (
+                <div className="flex-1 flex items-center justify-center bg-editor-background">
+                  <div className="text-center space-y-4">
+                    <FileText className="w-16 h-16 mx-auto text-muted-foreground" />
+                    <div>
+                      <h3 className="text-lg font-semibold">Welcome to Cursor Clone</h3>
+                      <p className="text-muted-foreground">Select a file from the explorer to start coding</p>
+                    </div>
+                    <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+                      <p>Press <kbd className="px-1 py-0.5 bg-muted rounded text-xs">Ctrl+P</kbd> to quick open files</p>
+                      <p>Press <kbd className="px-1 py-0.5 bg-muted rounded text-xs">Ctrl+Shift+P</kbd> to open command palette</p>
+                      <p>Press <kbd className="px-1 py-0.5 bg-muted rounded text-xs">Ctrl+`</kbd> to toggle terminal</p>
+                      <p>Press <kbd className="px-1 py-0.5 bg-muted rounded text-xs">Ctrl+Alt+A</kbd> to toggle advanced AI</p>
+                    </div>
                   </div>
                 </div>
+              )}
+            </div>
+            
+            {/* Advanced AI Panel */}
+            {isAdvancedAIVisible && (
+              <div className="w-80 border-l border-border bg-sidebar-background">
+                <AdvancedAIPanel 
+                  currentFile={currentFile ? {
+                    name: currentFile.name,
+                    path: currentFile.path,
+                    content: code,
+                  } : undefined}
+                  onApplyEdit={(edit) => {
+                    // Apply multi-line edit
+                    onNotification?.(`Applied edit: ${edit.description}`, 'success');
+                  }}
+                  onApplyRewrite={(rewrite) => {
+                    // Apply smart rewrite
+                    setCode(rewrite.rewrittenCode);
+                    onNotification?.(`Applied rewrite: ${rewrite.explanation}`, 'success');
+                  }}
+                />
               </div>
             )}
           </div>

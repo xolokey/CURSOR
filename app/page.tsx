@@ -1694,19 +1694,19 @@ export default function Home() {
       
       {/* Notifications */}
       <div className="fixed top-4 right-4 space-y-2 z-50">
-        {notifications.map((notification) => (
-          <div
-            key={notification.id}
+          {notifications.map((notification) => (
+            <div
+              key={notification.id}
             className={`p-4 rounded-lg shadow-lg border max-w-sm ${
-              notification.type === "success"
+                notification.type === "success"
                 ? "bg-green-50 border-green-200 text-green-800"
-                : notification.type === "error"
+                  : notification.type === "error"
                 ? "bg-red-50 border-red-200 text-red-800"
                 : "bg-blue-50 border-blue-200 text-blue-800"
-            }`}
-          >
+              }`}
+            >
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">{notification.message}</span>
+                <span className="text-sm font-medium">{notification.message}</span>
               <Button
                 variant="ghost"
                 size="sm"
@@ -1719,9 +1719,9 @@ export default function Home() {
               >
                 <X className="w-4 h-4" />
               </Button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
     </TooltipProvider>
   )
