@@ -546,27 +546,7 @@ export interface SearchMetadata {
   version: string;
 }
 
-export class AdvancedSearchSystem {
-  private engines: Map<string, SearchEngine> = new Map();
-  private indexes: Map<string, SearchIndex> = new Map();
-  private queries: Map<string, SearchQuery> = new Map();
-  private results: Map<string, SearchResult> = new Map();
-  private isInitialized = false;
-
-  constructor() {
-    this.initialize();
-  }
-
-  private async initialize(): Promise<void> {
-    if (this.isInitialized) return;
-    await this.initializeSearch();
-    this.isInitialized = true;
-  }
-
-  async createEngine(engine: Omit<SearchEngine, 'id' | 'createdAt' | 'updatedAt' | 'metadata'>): Promise<string> {
-    const engineId = `engine_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
-    const newEngine: SearchEngine = {
+// ...existing code...
       ...engine,
       id: engineId,
       metadata: {
