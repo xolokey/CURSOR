@@ -1,6 +1,26 @@
 {
-	"buildCommand": "pnpm build",
-	"installCommand": "pnpm install",
-	"outputDirectory": ".next",
-	"framework": "nextjs"
+  "version": 2,
+  "name": "comprehensive-ai-development-platform",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "app/api/**/*.ts": {
+      "maxDuration": 30
+    }
+  },
+  "regions": ["iad1"],
+  "framework": "nextjs"
 }
