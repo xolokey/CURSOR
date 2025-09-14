@@ -21,6 +21,9 @@ import {
   FileText,
   Search
 } from 'lucide-react';
+import TestingSystem from './TestingSystem';
+import DevOpsSystem from './DevOpsSystem';
+import CollaborationSystem from './CollaborationSystem';
 
 interface CodeFile {
   name: string;
@@ -394,158 +397,16 @@ describe('${activeFile.name}', () => {
               </div>
             </TabsContent>
 
-            <TabsContent value="testing" className="flex-1 p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="bg-gray-800 border-gray-700">
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <TestTube className="w-5 h-5 mr-2" />
-                      Test Generation
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <Button onClick={generateTests} className="w-full">
-                        <TestTube className="w-4 h-4 mr-2" />
-                        Generate Unit Tests
-                      </Button>
-                      <div className="p-4 bg-gray-700 rounded-lg">
-                        <h4 className="font-semibold mb-2">Test Coverage</h4>
-                        <div className="w-full bg-gray-600 rounded-full h-2 mb-2">
-                          <div className="bg-green-500 h-2 rounded-full" style={{width: '75%'}}></div>
-                        </div>
-                        <p className="text-sm text-gray-300">75% coverage</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-gray-800 border-gray-700">
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <Play className="w-5 h-5 mr-2" />
-                      Test Runner
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <Button onClick={runCode} className="w-full">
-                        <Play className="w-4 h-4 mr-2" />
-                        Run All Tests
-                      </Button>
-                      <div className="p-4 bg-gray-700 rounded-lg">
-                        <h4 className="font-semibold mb-2">Last Run Results</h4>
-                        <p className="text-sm text-green-400">✓ 5 tests passed</p>
-                        <p className="text-sm text-gray-300">0 tests failed</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+            <TabsContent value="testing" className="flex-1 m-0">
+              <TestingSystem />
             </TabsContent>
 
-            <TabsContent value="devops" className="flex-1 p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="bg-gray-800 border-gray-700">
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <GitBranch className="w-5 h-5 mr-2" />
-                      CI/CD Pipeline
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <Button className="w-full">
-                        <GitBranch className="w-4 h-4 mr-2" />
-                        Generate Pipeline
-                      </Button>
-                      <div className="p-4 bg-gray-700 rounded-lg">
-                        <h4 className="font-semibold mb-2">Pipeline Status</h4>
-                        <p className="text-sm text-green-400">✓ Build successful</p>
-                        <p className="text-sm text-green-400">✓ Tests passed</p>
-                        <p className="text-sm text-yellow-400">⏳ Deployment in progress</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-gray-800 border-gray-700">
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <BarChart3 className="w-5 h-5 mr-2" />
-                      Performance
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="p-4 bg-gray-700 rounded-lg">
-                        <h4 className="font-semibold mb-2">Build Time</h4>
-                        <p className="text-sm text-gray-300">2.3 seconds</p>
-                      </div>
-                      <div className="p-4 bg-gray-700 rounded-lg">
-                        <h4 className="font-semibold mb-2">Bundle Size</h4>
-                        <p className="text-sm text-gray-300">1.2 MB</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+            <TabsContent value="devops" className="flex-1 m-0">
+              <DevOpsSystem />
             </TabsContent>
 
-            <TabsContent value="collaboration" className="flex-1 p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="bg-gray-800 border-gray-700">
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <Users className="w-5 h-5 mr-2" />
-                      Team Members
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                          <span className="text-sm font-bold">JD</span>
-                        </div>
-                        <div>
-                          <p className="font-semibold">John Doe</p>
-                          <p className="text-sm text-gray-400">Online</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                          <span className="text-sm font-bold">JS</span>
-                        </div>
-                        <div>
-                          <p className="font-semibold">Jane Smith</p>
-                          <p className="text-sm text-gray-400">Coding</p>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-gray-800 border-gray-700">
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <MessageSquare className="w-5 h-5 mr-2" />
-                      Code Reviews
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="p-3 bg-gray-700 rounded-lg">
-                        <p className="text-sm font-semibold">PR #123: Feature implementation</p>
-                        <p className="text-xs text-gray-400">2 comments, 1 approval</p>
-                      </div>
-                      <div className="p-3 bg-gray-700 rounded-lg">
-                        <p className="text-sm font-semibold">PR #124: Bug fix</p>
-                        <p className="text-xs text-gray-400">0 comments, pending review</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+            <TabsContent value="collaboration" className="flex-1 m-0">
+              <CollaborationSystem />
             </TabsContent>
 
             <TabsContent value="analytics" className="flex-1 p-6">
