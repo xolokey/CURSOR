@@ -1,7 +1,7 @@
 'use client';
 
-import AICodingInterface from './components/AICodingInterface';
+import CursorUI from './components/CursorUI';
 
 export default function Home() {
-  return <AICodingInterface />;
+  return <CursorUI />;
 }
