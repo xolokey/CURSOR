@@ -24,6 +24,7 @@ import {
 import TestingSystem from './TestingSystem';
 import DevOpsSystem from './DevOpsSystem';
 import CollaborationSystem from './CollaborationSystem';
+import AnalyticsSystem from './AnalyticsSystem';
 
 interface CodeFile {
   name: string;
@@ -409,49 +410,8 @@ describe('${activeFile.name}', () => {
               <CollaborationSystem />
             </TabsContent>
 
-            <TabsContent value="analytics" className="flex-1 p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="bg-gray-800 border-gray-700">
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <BarChart3 className="w-5 h-5 mr-2" />
-                      Developer Metrics
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="p-4 bg-gray-700 rounded-lg">
-                        <h4 className="font-semibold mb-2">Lines of Code</h4>
-                        <p className="text-2xl font-bold text-blue-400">1,247</p>
-                      </div>
-                      <div className="p-4 bg-gray-700 rounded-lg">
-                        <h4 className="font-semibold mb-2">Commits Today</h4>
-                        <p className="text-2xl font-bold text-green-400">8</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-gray-800 border-gray-700">
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <FileText className="w-5 h-5 mr-2" />
-                      Code Health
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="p-4 bg-gray-700 rounded-lg">
-                        <h4 className="font-semibold mb-2">Code Quality Score</h4>
-                        <div className="w-full bg-gray-600 rounded-full h-2 mb-2">
-                          <div className="bg-green-500 h-2 rounded-full" style={{width: '85%'}}></div>
-                        </div>
-                        <p className="text-sm text-gray-300">85/100</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+            <TabsContent value="analytics" className="flex-1 m-0">
+              <AnalyticsSystem />
             </TabsContent>
 
             <TabsContent value="security" className="flex-1 p-6">
