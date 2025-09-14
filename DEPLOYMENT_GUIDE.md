@@ -98,11 +98,6 @@ The project includes optimized configuration files for Vercel:
   "env": {
     "NODE_ENV": "production"
   },
-  "functions": {
-    "app/api/**/*.ts": {
-      "maxDuration": 30
-    }
-  },
   "regions": ["iad1"],
   "framework": "nextjs"
 }
